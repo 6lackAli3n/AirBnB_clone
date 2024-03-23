@@ -1,5 +1,6 @@
 import unittest
 from models.base_model import BaseModel
+import datetime
 
 
 class TestBaseModel(unittest.TestCase):
@@ -29,7 +30,7 @@ class TestBaseModel(unittest.TestCase):
         self.assertEqual(base_model_dict['updated_at'], self.base_model.updated_at.isoformat())
 
     def test_init_method(self):
-        base_model2 = BaseModel(id="123", created_at="2023-01-01T12:00:00", updated_at="2023-01-01T12:00:00")
+        base_model2 = BaseModel(id="123", created_at="2023-01-01T12:00:00.000000", updated_at="2023-01-01T12:00:00.000000")
         self.assertEqual(base_model2.id, "123")
         self.assertEqual(base_model2.created_at, datetime.datetime(2023, 1, 1, 12, 0))
         self.assertEqual(base_model2.updated_at, datetime.datetime(2023, 1, 1, 12, 0))
