@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+This module defines the console for the AirBnB clone project.
+"""
 import cmd
 
 
