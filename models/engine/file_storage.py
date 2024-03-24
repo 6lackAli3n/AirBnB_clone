@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Module for FileStorage class."""
 import json
+import os
 from models.base_model import BaseModel
-
 class FileStorage:
     """Serializes instances to a JSON file and deserializes JSON file to instances."""
     __file_path = "file.json"
@@ -14,24 +14,25 @@ class FileStorage:
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id"""
-        key = obj.__class__.__name__ + "." + obj.id
+        key = "{}.{}".format(obj.__class__.__name__, obj.id)
         self.__objects[key] = obj
 
     def save(self):
         """Serializes __objects to the JSON file (__file_path)"""
-        obj_dict = {}
-        for key, obj in self.__objects.items():
-            obj_dict[key] = obj.to_dict()
+        serialized_objs = {}
+        for key, value in self.__objects.items():
+            serialized_objs[key] = value.to_dict()
         with open(self.__file_path, 'w') as file:
-            json.dump(obj_dict, file)
+            json.dump(serialized_objs, file)
 
     def reload(self):
         """Deserializes the JSON file to __objects"""
         try:
             with open(self.__file_path, 'r') as file:
-                obj_dict = json.load(file)
-                for key, value in obj_dict.items():
+                loaded_objs = json.load(file)
+                for key, value in loaded_objs.items():
                     class_name, obj_id = key.split(".")
-                    self.__objects[key] = eval(class_name)(**value)
+                    class_ref = eval(class_name)
+                    self.__objects[key] = class_ref(**value)
         except FileNotFoundError:
             pass
