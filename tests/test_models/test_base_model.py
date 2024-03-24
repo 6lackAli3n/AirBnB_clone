@@ -35,8 +35,7 @@ class TestBaseModel(unittest.TestCase):
         (base_model_dict['updated_at'], self.base_model.updated_at.isoformat())
 
     def test_init_method(self):
-        base_model2 = BaseModel
-        (
+        base_model2 = BaseModel(
                 id="123", created_at="2023-01-01T12:00:00.000000",
                 updated_at="2023-01-01T12:00:00.000000")
         self.assertEqual(base_model2.id, "123")
