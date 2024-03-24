@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import cmd
 
+
 class HBNBCommand(cmd.Cmd):
     ''' HBNB class contains entry point '''
 
@@ -25,6 +26,7 @@ class HBNBCommand(cmd.Cmd):
     def emptyline(self):
         ''' do nothing with empty line '''
         pass
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
