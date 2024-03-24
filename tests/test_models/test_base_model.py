@@ -1,6 +1,8 @@
+#!/usr/bin/python3
 import unittest
 from models.base_model import BaseModel
-import datetime
+from models import storage
+from datetime import datetime
 
 
 class TestBaseModel(unittest.TestCase):
