@@ -140,9 +140,8 @@ class HBNBCommand(cmd.Cmd):
             if obj.__class__.__name__ != class_name:
                 print("** no instance found **")
                 return
-
-                setattr(obj, attr_name, attr_type(attr_value))
-                storage.save()
+            setattr(obj, attr_name, attr_value)
+            storage.save()
         except NameError:
             print("** class doesn't exist **")
 
