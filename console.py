@@ -100,22 +100,21 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             for obj in storage.all().values():
                 objs.append(str(obj))
-            print(objs)
-            return
-        try:
-            class_name = arg.split()[0]
-            objs = [str(obj) for obj in storage.all().values()
-                    if obj.__class__.__name__ == arg]
-            if arg == "User":
-                objs.extend(str(obj) for obj in storage.all().values()
-                        if isinstance(obj, User))
-            if not objs:
-                print("** no instance found **")
+        else:
+            try:
+                class_name = arg.split()[0]
+                objs = [str(obj) for obj in storage.all().values()
+                        if obj.__class__.__name__ == arg]
+                if arg == "User":
+                    objs.extend(str(obj) for obj in storage.all().values()
+                            if isinstance(obj, User))
+                if not objs:
+                    print("** no instance found **")
+                    return
+            except keyError:
+                print("** class doesn't exist **")
                 return
-        except keyError:
-            print("** class doesn't exist **")
-            return
-        print(objs)
+            print(objs)
 
     def do_update(self, arg):
         """Updates an instance based on the class name and id"""
@@ -142,10 +141,14 @@ class HBNBCommand(cmd.Cmd):
                 return
             attr_name = args[2]
             attr_value = args[3]
+            if obj.__class__.__name__ != class_name:
+                print("** no instance found **")
+                return
+
             setattr(obj, attr_name, attr_value)
             storage.save()
-        except NameError:
-            print("** class doesn't exist **")
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
