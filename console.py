@@ -137,8 +137,10 @@ class HBNBCommand(cmd.Cmd):
                 return
             attr_name = args[2]
             attr_value = args[3]
-            if hasattr(obj, attr_name):
-                attr_type = type(getattr(obj, attr_name))
+            if obj.__class__.__name__ != class_name:
+                print("** no instance found **")
+                return
+
                 setattr(obj, attr_name, attr_type(attr_value))
                 storage.save()
         except NameError:
