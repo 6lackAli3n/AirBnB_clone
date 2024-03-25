@@ -39,6 +39,16 @@ class TestConsole(unittest.TestCase):
     @patch('sys.stdout', new_callable=StringIO)
     def test_create(self, mock_stdout):
         """Test create command"""
+        self.console.onecmd("create State name=\"California\"")
+        self.assertTrue(len(self.console.storage.all(State)) == 1)
+        self.console.onecmd("create City state_id=\"state_id\" name=\"San Francisco\"")
+        self.assertTrue(len(self.console.storage.all(City)) == 1)
+        self.console.onecmd("create Amenity name=\"Wifi\"")
+        self.assertTrue(len(self.console.storage.all(Amenity)) == 1)
+        self.console.onecmd("create Place city_id=\"city_id\" user_id=\"user_id\" name=\"Cozy Apartment\"")
+        self.assertTrue(len(self.console.storage.all(Place)) == 1)
+        self.console.onecmd("create Review place_id=\"place_id\" user_id=\"user_id\" text=\"Great experience!\"")
+        self.assertTrue(len(self.console.storage.all(Review)) == 1)
         self.assertFalse(self.console.onecmd("create BaseModel"))
         self.assertTrue(mock_stdout.getvalue() != "")
 
