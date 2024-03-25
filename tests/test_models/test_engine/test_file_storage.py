@@ -4,6 +4,8 @@ import unittest
 import os
 from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
+from models.user import User
+
 
 class TestFileStorage(unittest.TestCase):
     """Test cases for FileStorage class."""
@@ -17,6 +19,7 @@ class TestFileStorage(unittest.TestCase):
         """Tear down test environment."""
         if os.path.exists(self.file_path):
             os.remove(self.file_path)
+        del self.user
 
     def test_all(self):
         """Test all method."""
@@ -38,6 +41,20 @@ class TestFileStorage(unittest.TestCase):
         new_storage = FileStorage()
         new_storage.reload()
         self.assertIn('BaseModel.12345', new_storage.all())
+
+    def test_user_serialization(self):
+        """Test serialization and deserialization of User class."""
+        user = User()
+        user.email = "test@example.com"
+        user.password = "password"
+        user.first_name = "Test"
+        user.last_name = "User"
+        user.save()
+        self.storage.save()
+        new_storage = FileStorage()
+        new_storage.reload()
+        self.assertIn('User.' + user.id, new_storage.all())
+
 
 if __name__ == "__main__":
     unittest.main()

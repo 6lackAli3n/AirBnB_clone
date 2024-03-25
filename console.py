@@ -5,6 +5,7 @@ This module defines the console for the AirBnB clone project.
 import cmd
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
@@ -100,6 +101,9 @@ class HBNBCommand(cmd.Cmd):
             class_name = arg.split()[0]
             objs = [str(obj) for obj in storage.all().values()
                     if obj.__class__.__name__ == arg]
+            if arg == "User":
+                objs.extend(str(obj) for obj in storage.all().values()
+                        if isinstance(obj, User))
             if not objs:
                 print("** no instance found **")
                 return
