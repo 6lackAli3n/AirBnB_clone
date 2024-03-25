@@ -44,17 +44,12 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-        args = arg.split()
-        class_name = args[0]
-        if class_name not in self.classes:
+        try:
+            new_instance = eval(arg)()
+            new_instance.save()
+            print(new_instance.id)
+        except NameError:
             print("** class doesn't exist **")
-            return
-        new_instance = self.classes[class_name]()
-        for pair in args[1:]:
-            key, value = pair.split('=')
-            setattr(new_instance, key, value)
-        new_instance.save()
-        print(new_instance.id)
 
     def do_show(self, arg):
         """Prints the string representation of an instance"""
@@ -62,21 +57,20 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name missing **")
             return
-        class_name = args[0]
-        if class_name not in [
-                "BaseModel", "State", "City", "Amenity", "Place", "Review"]:
-            print("** class doesn't exist **")
-            return
-        if len(args) < 2:
+        try:
+            class_name = args[0]
+            if len(args) < 2:
                 print("** instance id missing **")
                 return
-        obj_id = args[1]
-        key = "{}.{}".format(class_name, obj_id)
-        obj = storage.all().get(key)
-        if not obj:
-            print("** no instance found **")
-        else:
-            print(obj)
+            obj_id = args[1]
+            key = "{}.{}".format(class_name, obj_id)
+            obj = storage.all().get(key)
+            if not obj:
+                print("** no instance found **")
+            else:
+                print(obj)
+        except NameError:
+            print("** class doesn't exist **")
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id"""
@@ -148,9 +142,6 @@ class HBNBCommand(cmd.Cmd):
                 return
             attr_name = args[2]
             attr_value = args[3]
-            if obj.__class__.__name__ != class_name:
-                print("** no instance found **")
-                return
             setattr(obj, attr_name, attr_value)
             storage.save()
         except NameError:
