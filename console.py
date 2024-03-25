@@ -20,7 +20,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         ''' exit the program '''
-        print("")
+        print()
         return True
 
     def help_EOF(self):
