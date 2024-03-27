@@ -81,6 +81,12 @@ class TestConsole(unittest.TestCase):
         self.assertFalse(self.console.onecmd("update BaseModel"))
         self.assertTrue(mock_stdout.getvalue() == "** instance id missing **\n")
 
+    @patch('sys.stdout', new_callable=StringIO)
+    def test_count(self, mock_stdout):
+        """Test count command"""
+        self.console.onecmd("User.count()")
+        self.assertTrue(mock_stdout.getvalue().strip().isdigit())
+
 
 if __name__ == '__main__':
     unittest.main()

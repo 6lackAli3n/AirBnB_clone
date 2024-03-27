@@ -11,6 +11,8 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+from models.engine.file_storage import FileStorage
+import json
 
 
 class HBNBCommand(cmd.Cmd):
@@ -41,36 +43,41 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, arg):
         """Creates a new instance of BaseModel"""
-        if not arg:
+        args = arg.split()
+        if len(args) == 0:
             print("** class name missing **")
             return
-        try:
-            new_instance = eval(arg)()
-            new_instance.save()
-            print(new_instance.id)
-        except NameError:
+        class_name = args[0]
+        if class_name not in {
+                "BaseModel", "User", "State", "City", "Amenity", "Place", "Review"}:
             print("** class doesn't exist **")
+            return
+        
+        new_instance = eval(class_name)()
+        new_instance.save()
+        print(new_instance.id)
 
     def do_show(self, arg):
         """Prints the string representation of an instance"""
         args = arg.split()
-        if not arg:
+        if len(args) == 0:
             print("** class name missing **")
             return
-        try:
-            class_name = args[0]
-            if len(args) < 2:
-                print("** instance id missing **")
-                return
-            obj_id = args[1]
-            key = "{}.{}".format(class_name, obj_id)
-            obj = storage.all().get(key)
-            if not obj:
-                print("** no instance found **")
-            else:
-                print(obj)
-        except NameError:
+        class_name = args[0]
+        if class_name not in {
+                "BaseModel", "User", "State", "City", "Amenity", "Place", "Review"}:
             print("** class doesn't exist **")
+            return
+        if len(args) == 2:
+            print("** instance id missing **")
+            return
+        obj_id = args[1]
+        all_objs = storage.all()
+        key = class_name + "." + obj_id
+        if key in all_objs:
+            print(all_objs[key])
+        else:
+            print("** no instance found **")
 
     def do_destroy(self, arg):
         """Deletes an instance based on the class name and id"""
@@ -103,16 +110,19 @@ class HBNBCommand(cmd.Cmd):
         else:
             try:
                 class_name = arg.split()[0]
-                objs = [str(obj) for obj in storage.all().values()
-                        if obj.__class__.__name__ == arg]
-                if arg == "User":
-                    objs.extend(str(obj) for obj in storage.all().values()
-                            if isinstance(obj, User))
+                if class_name not in [
+                        "BaseModel", "User", "State", "City", "Amenity", "Place", "Review"]:
+                    print("** class doesn't exist **")
+                    return
+                if class_name == "User":
+                    objs = [str(obj) for obj in storage.all().values() if isinstance(obj, User)]
+                else:
+                    objs = [str(obj) for obj in storage.all().values() if obj.__class__.__name__ == class_name]
                 if not objs:
                     print("** no instance found **")
                     return
-            except keyError:
-                print("** class doesn't exist **")
+            except IndexError:
+                print("** class name missing **")
                 return
             print(objs)
 
@@ -149,6 +159,21 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
         except Exception as e:
             print(e)
+
+    def do_count(self, arg):
+        """Count the number of instances of a class"""
+        args = arg.split()
+        if len(args) == 0:
+            print("** class name missing **")
+            return
+        class_name = args[0]
+        if class_name not in {
+                "BaseModel", "User", "State", "City", "Amenity", "Place", "Review"}:
+            print("** class doesn't exist **")
+            return
+        count = sum(1 for key in storage.all() if key.startswith(class_name + "."))
+        print(count)
+
 
 
 if __name__ == '__main__':
